@@ -156,5 +156,14 @@
             }
         },
         "tests": []
+    },
+    {
+        "description": "relative refs",
+        "schema": {
+            "properties": {
+                "prop": {"$ref": "ref/relative.json"}
+            }
+        },
+        "tests": []
     }
 ]

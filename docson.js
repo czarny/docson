@@ -18,7 +18,7 @@ var docson = docson || {};
 
 docson.templateBaseUrl="templates";
 
-define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib/marked", "lib/traverse"], function(jquery, handlebars, highlight, jsonpointer, marked) {
+define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib/marked", "lib/URI", "lib/traverse"], function(jquery, handlebars, highlight, jsonpointer, marked, URI) {
 
     var ready = $.Deferred();
     var boxTemplate;
@@ -433,7 +433,7 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                 });
             };
 
-            var resolveRefsReentrant = function(schema){
+            var resolveRefsReentrant = function(schema, base_url){
                 traverse(schema).forEach(function(item) {
                     // Fix Swagger weird generation for array.
                     if(item && item.$ref == "array") {
@@ -462,7 +462,8 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                             //External reference, fetch it.
                             var segments = item.split("#");
                             refs[item] = null;
-                            var p = $.get(segments[0]).then(function(content) {
+                            var url = segments[0]
+                            var p = $.get(url).then(function(content) {
                                 if(typeof content != "object") {
                                     try {
                                         content = JSON.parse(content);
@@ -473,7 +474,7 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                                 if(content) {
                                     refs[item] = content;
                                     renderBox();
-                                    resolveRefsReentrant(content); 
+                                    resolveRefsReentrant(content, url); 
                                 }
                             });
                         }
@@ -481,7 +482,8 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                             //Local to this server, fetch relative
                             var segments = item.split("#");
                             refs[item] = null;
-                            var p = $.get(baseUrl + segments[0]).then(function(content) {
+                            var url = URI(segments[0]).absoluteTo(base_url);
+                            var p = $.get(url).then(function(content) {
                                 if(typeof content != "object") {
                                     try {
                                         content = JSON.parse(content);
@@ -492,7 +494,7 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                                 if(content) {
                                     refs[item] = content;
                                     renderBox();
-                                    resolveRefsReentrant(content);
+                                    resolveRefsReentrant(content, url);
                                 }
                             });
                         }
@@ -500,7 +502,7 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                 });
             };
             
-            resolveRefsReentrant(schema);
+            resolveRefsReentrant(schema, baseUrl);
             renderBox();
             
             d.resolve();

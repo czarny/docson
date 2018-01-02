@@ -1,0 +1,16 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Relative object",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "address": {
+            "description": "Relative definition reference",
+            "$ref": "../address.json#/definitions/address"
+        }
+
+    }
+}
+
