@@ -472,7 +472,11 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                                     }
                                 }
                                 if(content) {
-                                    refs[item] = content;
+                                    if (segments[1]) {
+                                        refs[item] = jsonpointer.get(content, '#' + segments[1]);
+                                    } else {
+                                        refs[item] = content;
+                                    }
                                     renderBox();
                                     resolveRefsReentrant(content, url); 
                                 }
@@ -492,7 +496,11 @@ define(["lib/jquery", "lib/handlebars", "lib/highlight", "lib/jsonpointer", "lib
                                     }
                                 }
                                 if(content) {
-                                    refs[item] = content;
+                                    if (segments[1]) {
+                                        refs[item] = jsonpointer.get(content, '#' + segments[1]);
+                                    } else {
+                                        refs[item] = content;
+                                    }
                                     renderBox();
                                     resolveRefsReentrant(content, url);
                                 }
