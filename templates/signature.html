@@ -16,6 +16,9 @@
 {{#if keyword}}
     <span class="type-keyword">{{keyword}}{{range schema.minItems schema.maxItems 0 "" false false ".."}}</span>
     {{#each schemas}}
+        {{#exists restrictions}}
+            <span class="type-restrictions">{{restrictions}}</span>
+        {{/exists}}
         <span class="type-keyword">{{enum this}}</span>
         {{#simple this}}
             <span class="signature-type-{{__type}}">
@@ -51,6 +54,9 @@
 {{/if}}
 {{#unless keyword}}
     {{#each schemas}}
+        {{#exists restrictions}}
+            <span class="type-restrictions">({{restrictions}})</span>
+        {{/exists}}
         <span class="type-keyword">{{enum this}}</span>
         {{#primitive this}}
            <span class="signature-type-{{__type}}">
